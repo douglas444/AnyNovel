@@ -711,6 +711,13 @@ public double getClassBoundry() {
 	return this.m_globalBoundry; 
 }
 
+	public Instance getM_classCentre() {
+		return m_classCentre;
+	}
+
+	public int getM_classID() {
+		return m_classID;
+	}
 }
 
 

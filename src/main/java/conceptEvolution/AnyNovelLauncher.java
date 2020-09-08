@@ -3,36 +3,25 @@ package conceptEvolution;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import StreamAR.BLM;
+import StreamAR.ClassWSubClusters;
 import StreamAR.NovelPredection;
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+import interceptor.AnyNovelInterceptor;
+import interceptor.context.ClusteredConceptContext;
 import weka.clusterers.ClusterEvaluation;
-import weka.clusterers.Clusterer;
 import weka.clusterers.EM;
-import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.OptionHandler;
-import weka.core.Utils;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
-import weka.gui.TaskLogger;
 
 public class AnyNovelLauncher {
 	static String m_History = "";
@@ -54,6 +43,7 @@ public class AnyNovelLauncher {
 	static int rec_ptscounter = 0;
 	static String s = "\n";
 	static double confusionMatrix[][];
+	static AnyNovelInterceptor interceptor = new AnyNovelInterceptor();
 
 	public static void run(BLM model, String test_dataset, String valid_dataset) {
 		try {
@@ -389,6 +379,39 @@ public class AnyNovelLauncher {
 						if (i == n)
 							declared = true;
 						NovelPredection pred = CEModel.noveltyStatistics();
+
+						List<Instance> targetInstances = new ArrayList<>();
+						for (int j = 0; j < CEModel.getJustPredicted().numInstances(); ++j) {
+							targetInstances.add(CEModel.getJustPredicted().instance(j));
+						}
+
+						ClusteredConceptContext context = new ClusteredConceptContext()
+								.setDefaultAction(() -> {})
+								.setKnownClustersCentroids(CEModel.getM_classesWithClusters_BeforePrediction()
+										.stream()
+										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
+										.map(ClassWSubClusters::getM_classCentre)
+										.map(Instance::toDoubleArray)
+										.collect(Collectors.toList()))
+								.setKnownLabels((CEModel.getM_classesWithClusters_BeforePrediction()
+										.stream()
+										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
+										.map(ClassWSubClusters::getM_classCentre)
+										.map(Instance::classValue)
+										.collect(Collectors.toSet())))
+								.setTargetClusterCentroid(CEModel
+										.getInstancesCentre(removeClass(CEModel.getJustPredicted()))
+										.toDoubleArray())
+								.setTargetSamples(targetInstances
+										.stream()
+										.map(Instance::toDoubleArray)
+										.collect(Collectors.toList()));
+
+						if (CEModel.getLastPredictionCategory().equals(ConceptCategory.NOVELTY)) {
+							interceptor.NOVELTY_SEGMENT.with(context).executeOrDefault(() -> {});
+						} else if (CEModel.getLastPredictionCategory().equals(ConceptCategory.KNOWN)) {
+							interceptor.KNOWN_SEGMENT.with(context).executeOrDefault(() -> {});
+						}
 
 						s = "*True label= " + pred.getClassTrueLabel()[0] + " Predicted label:( "
 								+ pred.getPredictedLabel() + " ) FA_novel= " + pred.IsFAnovel() + " Recurrent Novel= "

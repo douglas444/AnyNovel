@@ -5,9 +5,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import conceptEvolution.ConceptCategory;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
@@ -42,6 +44,8 @@ public class BLM implements Serializable {
 	int[] ALcases = new int[3];
 	int[] unknownCases = new int[4];
 	boolean unkFlag = false;
+	private ConceptCategory lastPredictionCategory;
+	private List<ClassWSubClusters> m_classesWithClusters_BeforePrediction;
 
 	public BLM(ArrayList<ClassWSubClusters> m_model, int NoOFClasses, String[] Labels)
 
@@ -688,7 +692,7 @@ public class BLM implements Serializable {
 	}
 
 	// REVIEWED
-	private Instance getInstancesCentre(Instances newInst) {
+	public Instance getInstancesCentre(Instances newInst) {
 		// TODO Auto-generated method stub
 
 		if (newInst.numInstances() == 1)
@@ -1067,6 +1071,8 @@ public class BLM implements Serializable {
 
 	public String adaptationComponent(Instances nInst) throws Throwable {
 
+		this.m_classesWithClusters_BeforePrediction = new ArrayList<>(m_classesWithClusters);
+
 		this.m_predLabel = "";
 		// Change to get the time stamp
 		this.reNovelFlag = false;
@@ -1339,10 +1345,13 @@ public class BLM implements Serializable {
 				this.justPredicted = new Instances(this.dataWarehouse);
 				if (this.m_classesWithClusters.get(hitInsideID).m_classID == -1) {
 					this.accumalateNBClass(this.suspNovelInstances, hitInsideID);
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
 					details += ", New born class accumalated ,";
 					reNovelFlag = true;
-				} else
+				} else {
 					m_predLabel = m_Oldlabels[hitInsideID];
+					this.lastPredictionCategory = ConceptCategory.KNOWN;
+				}
 				reset = true;
 				this.suspNovelInstances.delete();
 				str += " Drift Info: " + this.suspNovelInstances.numInstances() + "," + this.suspectedDrift + ",";
@@ -1374,8 +1383,11 @@ public class BLM implements Serializable {
 					this.accumalateNBClass(this.suspNovelInstances, hitInsideID);
 					details += ", New born class accumalated";
 					this.reNovelFlag = true;
-				} else
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
+				} else {
 					m_predLabel = m_Oldlabels[hitInsideID];
+					this.lastPredictionCategory = ConceptCategory.KNOWN;
+				}
 
 				str += " Drift info" + this.suspNovelInstances.numInstances() + "," + this.suspectedDrift + ","
 						+ this.driftClassID;
@@ -1405,8 +1417,11 @@ public class BLM implements Serializable {
 				this.accumalateNBClass(newInst, hitInsideID);
 				details += ", New born class accumalated";
 				reNovelFlag = true;
-			} else
+				this.lastPredictionCategory = ConceptCategory.NOVELTY;
+			} else {
 				m_predLabel = m_Oldlabels[hitInsideID];
+				this.lastPredictionCategory = ConceptCategory.KNOWN;
+			}
 
 			str += " Drift info:" + this.suspNovelInstances.numInstances() + "," + this.suspectedDrift + ",";
 			for (int id = 0; id < driftClassID.size(); id++)
@@ -1480,8 +1495,10 @@ public class BLM implements Serializable {
 					this.accumalateNBClass(this.suspNovelInstances, y);
 					details += "New born class accumalated ,";
 					reNovelFlag = true;
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
 				} else {
 					m_predLabel = m_Oldlabels[y];
+					this.lastPredictionCategory = ConceptCategory.KNOWN;
 				}
 				reset = true;
 				this.suspNovelInstances.delete();
@@ -1534,10 +1551,13 @@ public class BLM implements Serializable {
 				this.justPredicted = new Instances(dataWarehouse);
 				if (this.m_classesWithClusters.get(ID).m_classID == -1) {
 					this.accumalateNBClass(this.suspNovelInstances, ID);
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
 					details += ", New born class accumalated ,";
 					reNovelFlag = true;
-				} else
+				} else {
 					m_predLabel = m_Oldlabels[ID];
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
+				}
 
 				this.suspNovelInstances.delete();
 				str += this.suspNovelInstances.numInstances() + "," + this.suspectedDrift + ",";
@@ -1584,9 +1604,10 @@ public class BLM implements Serializable {
 				casesCounter[3][4]++;
 				this.dataWarehouse = new Instances(this.suspNovelInstances);
 				this.justPredicted = new Instances(this.suspNovelInstances, 0);
-				if (newStr.contains("novel"))
+				if (newStr.contains("novel")) {
 					this.faNovelFlag = true;
-				else
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
+				} else
 					this.faNovelFlag = false;
 
 				this.suspNovelInstances.delete();
@@ -1669,8 +1690,11 @@ public class BLM implements Serializable {
 				this.accumalateNBClass(this.suspNovelInstances, ID);
 				details += ", New born class accumalated ,";
 				reNovelFlag = true;
-			} else
+				this.lastPredictionCategory = ConceptCategory.NOVELTY;
+			} else {
 				m_predLabel = m_Oldlabels[ID];
+				this.lastPredictionCategory = ConceptCategory.KNOWN;
+			}
 			reset = true;
 			this.suspNovelInstances.delete();
 
@@ -1776,6 +1800,7 @@ public class BLM implements Serializable {
 					this.justPredicted = new Instances(this.dataWarehouse);
 					this.faNovelFlag = true;
 					this.addNovelClass(suspNovelInstances, MLabel[0]);
+					this.lastPredictionCategory = ConceptCategory.NOVELTY;
 					details += "Case 4.3, Novel Class created ,";
 					details += ALStats;
 					casesCounter[4][3]++;
@@ -2098,9 +2123,12 @@ public class BLM implements Serializable {
 			casesCounter[1][1]++;
 			if (this.m_classesWithClusters.get(hitInsideID).m_classID == -1) {
 				this.accumalateNBClass(newInst, hitInsideID);
+				this.lastPredictionCategory = ConceptCategory.NOVELTY;
 				reNovelFlag = true;
-			} else
+			} else {
 				m_predLabel = m_Oldlabels[hitInsideID];
+				this.lastPredictionCategory = ConceptCategory.KNOWN;
+			}
 			dataWarehouse = new Instances(newInst);
 			this.justPredicted = new Instances(newInst);
 			str += strDis;
@@ -2809,4 +2837,15 @@ public class BLM implements Serializable {
 		return dest;
 	}
 
+	public List<ClassWSubClusters> getM_classesWithClusters_BeforePrediction() {
+		return m_classesWithClusters_BeforePrediction;
+	}
+
+	public ConceptCategory getLastPredictionCategory() {
+		return lastPredictionCategory;
+	}
+
+	public Instances getJustPredicted() {
+		return justPredicted;
+	}
 }
