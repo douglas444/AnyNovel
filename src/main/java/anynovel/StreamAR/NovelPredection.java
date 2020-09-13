@@ -1,6 +1,4 @@
-package StreamAR;
-
-import weka.core.Instances;
+package anynovel.StreamAR;
 
 public class NovelPredection {
 //	protected Instances m_novelInstances;

@@ -1,4 +1,4 @@
-package StreamAR;
+package anynovel.StreamAR;
 
 import java.awt.Component;
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import conceptEvolution.ConceptCategory;
+import anynovel.conceptEvolution.ConceptCategory;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;

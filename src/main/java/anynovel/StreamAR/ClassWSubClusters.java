@@ -1,4 +1,4 @@
-package StreamAR;
+package anynovel.StreamAR;
 import java.io.Serializable;
 import weka.core.Instance;
 import weka.core.Instances;

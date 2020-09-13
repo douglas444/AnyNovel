@@ -1,12 +1,8 @@
-package StreamAR;
+package anynovel.StreamAR;
 
-import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
-import javax.swing.text.Utilities;
-import java.lang.Object;
 //import com.sun.corba.se.impl.util.Utility;
 
 import weka.core.Attribute;
@@ -14,8 +10,6 @@ import weka.core.EuclideanDistance;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.Utils;
-import weka.estimators.NNConditionalEstimator;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
@@ -405,7 +399,7 @@ public class Model implements Serializable {
 		double[] result = new double[first.length];
 		if (first.length != second.length)
 			throw new Exception(
-					"Instaces are not compatiable : StreamAR Addition");
+					"Instaces are not compatiable : anynovel.StreamAR Addition");
 		for (int i = 0; i < first.length; i++) {
 			result[i] = first[i] + second[i];
 		}
@@ -418,7 +412,7 @@ public class Model implements Serializable {
 		double[] result = new double[first.length];
 		if (first.length != second.length)
 			throw new Exception(
-					"Instaces are not compatiable : StreamAR Substraction");
+					"Instaces are not compatiable : anynovel.StreamAR Substraction");
 		for (int i = 0; i < first.length; i++) {
 			result[i] = first[i] - second[i];
 			result[i] = result[i] * result[i];

@@ -1,7 +1,7 @@
-package interceptor;
+package anynovel.interceptor;
 
 import br.com.douglas444.dsframework.interceptor.ConsumerOrRunnableInterceptor;
-import interceptor.context.ClusteredConceptContext;
+import anynovel.interceptor.context.ClusteredConceptContext;
 
 public class AnyNovelInterceptor {
 

@@ -1,4 +1,4 @@
-package conceptEvolution;
+package anynovel.conceptEvolution;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,9 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import StreamAR.BLM;
-import StreamAR.ClassWSubClusters;
-import StreamAR.Model;
+import anynovel.StreamAR.BLM;
+import anynovel.StreamAR.ClassWSubClusters;
+import anynovel.StreamAR.Model;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Utils;

@@ -1,4 +1,4 @@
-package conceptEvolution;
+package anynovel.conceptEvolution;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,11 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import StreamAR.BLM;
-import StreamAR.ClassWSubClusters;
-import StreamAR.NovelPredection;
-import interceptor.AnyNovelInterceptor;
-import interceptor.context.ClusteredConceptContext;
+import anynovel.StreamAR.BLM;
+import anynovel.StreamAR.ClassWSubClusters;
+import anynovel.StreamAR.NovelPredection;
+import anynovel.interceptor.AnyNovelInterceptor;
+import anynovel.interceptor.context.ClusteredConceptContext;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.core.Instance;
@@ -43,7 +43,7 @@ public class AnyNovelLauncher {
 	static int rec_ptscounter = 0;
 	static String s = "\n";
 	static double confusionMatrix[][];
-	static AnyNovelInterceptor interceptor = new AnyNovelInterceptor();
+	public static AnyNovelInterceptor interceptor = new AnyNovelInterceptor();
 
 	public static void run(BLM model, String test_dataset, String valid_dataset, String parametersPath) {
 		try {

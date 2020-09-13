@@ -1,18 +1,11 @@
-package conceptEvolution;
+package anynovel.conceptEvolution;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Scanner;
 
@@ -21,10 +14,10 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
-import StreamAR.ClassWSubClusters;
-import StreamAR.IntCWSCClass;
-import StreamAR.Model;
-import StreamAR.BLM;
+import anynovel.StreamAR.ClassWSubClusters;
+import anynovel.StreamAR.IntCWSCClass;
+import anynovel.StreamAR.Model;
+import anynovel.StreamAR.BLM;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 import weka.core.Attribute;
@@ -34,7 +27,6 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
-import weka.core.converters.CSVLoader;
 
 public class TrainingLauncher {
 	// For either building a model from a training data or uploading an existing
