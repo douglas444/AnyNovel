@@ -45,19 +45,19 @@ public class AnyNovelLauncher {
 	static double confusionMatrix[][];
 	static AnyNovelInterceptor interceptor = new AnyNovelInterceptor();
 
-	public static void run(BLM model, String test_dataset, String valid_dataset) {
+	public static void run(BLM model, String test_dataset, String valid_dataset, String parametersPath) {
 		try {
 			// Validation phase if -valid argument provided
 			if (!valid_dataset.isEmpty()) {
 				System.out.println("Validation Phase:\n---------\n");
 				validArg = true;
 				validPhase = true;
-				model = runOnData(model, valid_dataset);
+				model = runOnData(model, valid_dataset, parametersPath);
 				System.out.println(model.modelStatistices());
 			}
 			// Testing phase
 			validPhase = false;
-			runOnData(model, test_dataset);
+			runOnData(model, test_dataset, parametersPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,9 +68,9 @@ public class AnyNovelLauncher {
 
 	}
 
-	private static BLM runOnData(BLM model, String dataset) throws Throwable {
-		String filePath = new File("").getAbsolutePath();
-		filePath = filePath.concat("/Data/Test/" + dataset);
+	private static BLM runOnData(BLM model, String dataset, String parametersPath) throws Throwable {
+		String filePath = "";
+		filePath = filePath.concat(dataset);
 		File testFile = new File(filePath);
 		System.out.println(testFile);
 		try {
@@ -95,17 +95,17 @@ public class AnyNovelLauncher {
 		m_testInstaces.setClassIndex(m_testInstaces.numAttributes() - 1);
 		trainTimeStart = System.currentTimeMillis();
 		// Call anyNovel on Test data, parameters and using Model
-		BLM newModel = AnyNovel(model, m_testInstaces, readParameters(dataset, model));
+		BLM newModel = AnyNovel(model, m_testInstaces, readParameters(dataset, model, parametersPath));
 		trainTimeElapsed = System.currentTimeMillis() - trainTimeStart;
 		System.out.println("Time Elapsed: " + trainTimeElapsed);
 		// System.out.println(outBuff);
 		return newModel;
 	}
 
-	private static HashMap<String, String> readParameters(String dataset, BLM model) throws IOException {
+	private static HashMap<String, String> readParameters(String dataset, BLM model, String parametersPath) throws IOException {
+		System.out.println("Reading parameters from: " + parametersPath);
 		HashMap<String, String> parameters = new HashMap<String, String>();
-		String filepath = new File("").getAbsolutePath();
-		File fc = new File(filepath.concat("/parameters.txt"));
+		File fc = new File(parametersPath);
 		BufferedReader in = new BufferedReader(new FileReader(fc.getPath()));
 		String line;
 		while ((line = in.readLine()) != null) {
@@ -396,8 +396,8 @@ public class AnyNovelLauncher {
 								.setKnownLabels((CEModel.getM_classesWithClusters_BeforePrediction()
 										.stream()
 										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
-										.map(ClassWSubClusters::getM_classCentre)
-										.map(Instance::classValue)
+										.map(ClassWSubClusters::getClassID)
+										.map(Double::valueOf)
 										.collect(Collectors.toSet())))
 								.setTargetClusterCentroid(CEModel
 										.getInstancesCentre(removeClass(CEModel.getJustPredicted()))

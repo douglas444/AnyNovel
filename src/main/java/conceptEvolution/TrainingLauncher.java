@@ -46,8 +46,9 @@ public class TrainingLauncher {
 	// prediction phase
 	protected boolean subClusterModelFlag = false;
 	protected static Model baseModel = null;
-	private static Instances m_Instances;
+	private static Instances m_Instances = null;
 	boolean CWSCFlag = true;
+	public static String inputDatasetName;
 
 	protected int old_distance = 0;
 
@@ -92,14 +93,21 @@ public class TrainingLauncher {
 		File trainFile = null;
 		String datasetname = "";
 		// Define relative path
-		String filePath = new File("").getAbsolutePath();
+		String filePath = "";
 		// 1- option 1: if the exact file provided "Including extension
 		if (s.trim().toLowerCase().contains("csv") || s.trim().toLowerCase().contains("arff")) {
 			System.out.println(s);
 			datasetname = s.split("\\.")[0];
+			if (s.contains("_")) {
+				TrainingLauncher.inputDatasetName = s.split("_")[0];
+				if (s.contains("/")) {
+					String[] arr = TrainingLauncher.inputDatasetName.split("/");
+					TrainingLauncher.inputDatasetName = arr[arr.length - 1];
+				}
+			}
 			System.out.println("Dataset name: "+datasetname);
 
-			filePath = filePath.concat("/Data/Train/" + s);
+			filePath = filePath.concat(s);
 			trainFile = new File(filePath);
 			
 			System.out.println("Training File Path: "+trainFile);
@@ -278,12 +286,15 @@ public class TrainingLauncher {
 		// with readModel Function
 		try {
 			// Create file
-			String path = new File("").getAbsolutePath();
-			Scanner reader = new Scanner(System.in); // Reading from System.in
-			System.out.println("Wrirting model to Disk (/Models/), Enter the name of your dataset: ");
-			String  datasetName = reader.next(); // Scans the next token of the input as an
-			datasetName+= ext; 
-			FileWriter fstream = new FileWriter(path.concat("/Models/" + datasetName + ".dat"));
+			String path = "";
+			String  datasetName = TrainingLauncher.inputDatasetName != null ? TrainingLauncher.inputDatasetName : "new_model";
+			System.out.println("Writing model to Disk (/Models/), under name: " + datasetName);
+			datasetName+= ext;
+			File diretorio = new File("./AnyNovelModels/");
+			if (!diretorio.exists()) {
+				diretorio.mkdir();
+			}
+			FileWriter fstream = new FileWriter(path.concat("./AnyNovelModels/" + datasetName + ".dat"));
 			BufferedWriter out = new BufferedWriter(fstream);
 			System.out.println(datasetName+".dat created in /Models/");
 

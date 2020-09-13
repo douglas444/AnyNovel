@@ -44,7 +44,10 @@ public class ExpLauncher {
 
 			}
 		}
-		if (args.length > 2) {
+
+  		String parametersPath = null;
+
+		if (args.length > 3) {
 			if (args[ind].toLowerCase().trim().contains("-blm")) {
 				if (args[ind + 1].toLowerCase().trim().contains("train")) {
 					System.out.println("Build the model");
@@ -58,15 +61,18 @@ public class ExpLauncher {
 					CWSCModel = readModel(args[2]);
 				}
 			}
+
+			parametersPath = args[args.length - 1];
+
 		} else {
-			System.out.println("arguments required: -BLM train/load dataset_name");
+			System.out.println("arguments required: -BLM train/load dataset_name parameters_file_name");
 		}
 
 		// -------- Run AnyNovel on the provided test file
 		String testName = findArg(args, "-test");
 		String validName = findArg(args, "-valid");
 		startTime = System.currentTimeMillis();
-		AnyNovelLauncher.run(CWSCModel, testName, validName);
+		AnyNovelLauncher.run(CWSCModel, testName, validName, parametersPath);
 		duration = System.currentTimeMillis() - startTime;
 		System.out.println("Duration of AnyNovel: " + Utils.doubleToString(duration / 1000.0, 10));
 	}
@@ -86,7 +92,7 @@ public class ExpLauncher {
 		BLM CWSCModel = null;
 		String filePath = new File("").getAbsolutePath();
 
-		File fc = new File(filePath.concat("/Models/" + s));
+		File fc = new File(filePath.concat("./AnyNovel/Models/" + s));
 
 		if (fc.getName().contains(".dat")) {
 			BufferedReader in = new BufferedReader(new FileReader(fc.getPath()));
