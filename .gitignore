@@ -1,5 +1,6 @@
 *.iml
 .idea/
+*.csv
 target/
 
 Data/Test/covtypeOrigNorm_test.arff
