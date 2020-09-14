@@ -390,8 +390,13 @@ public class AnyNovelLauncher {
 								.setKnownClustersCentroids(CEModel.getM_classesWithClusters_BeforePrediction()
 										.stream()
 										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
-										.map(ClassWSubClusters::getM_classCentre)
-										.map(Instance::toDoubleArray)
+										.map(classWSubClusters -> {
+											double[] instanceArr = classWSubClusters.getM_classCentre().toDoubleArray();
+											double[] instanceArrWithClass = new double[instanceArr.length + 1];
+											System.arraycopy(instanceArr, 0, instanceArrWithClass, 0, instanceArr.length);
+											instanceArrWithClass[instanceArrWithClass.length - 1] = classWSubClusters.getClassID();
+											return instanceArrWithClass;
+										})
 										.collect(Collectors.toList()))
 								.setKnownLabels((CEModel.getM_classesWithClusters_BeforePrediction()
 										.stream()
