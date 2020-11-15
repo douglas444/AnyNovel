@@ -5,13 +5,13 @@ import anynovel.interceptor.context.ClusteredConceptContext;
 
 public class AnyNovelInterceptor {
 
-    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> NOVELTY_SEGMENT;
-    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> KNOWN_SEGMENT;
+    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> NOVEL_CLUSTER;
+    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> KNOWN_CLUSTER;
 
     public AnyNovelInterceptor() {
 
-        this.NOVELTY_SEGMENT = new ConsumerOrRunnableInterceptor<>();
-        this.KNOWN_SEGMENT = new ConsumerOrRunnableInterceptor<>();
+        this.NOVEL_CLUSTER = new ConsumerOrRunnableInterceptor<>();
+        this.KNOWN_CLUSTER = new ConsumerOrRunnableInterceptor<>();
 
     }
 }

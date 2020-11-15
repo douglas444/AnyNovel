@@ -413,9 +413,9 @@ public class AnyNovelLauncher {
 										.collect(Collectors.toList()));
 
 						if (CEModel.getLastPredictionCategory().equals(ConceptCategory.NOVELTY)) {
-							interceptor.NOVELTY_SEGMENT.with(context).executeOrDefault(() -> {});
+							interceptor.NOVEL_CLUSTER.with(context).executeOrDefault(() -> {});
 						} else if (CEModel.getLastPredictionCategory().equals(ConceptCategory.KNOWN)) {
-							interceptor.KNOWN_SEGMENT.with(context).executeOrDefault(() -> {});
+							interceptor.KNOWN_CLUSTER.with(context).executeOrDefault(() -> {});
 						}
 
 						s = "*True label= " + pred.getClassTrueLabel()[0] + " Predicted label:( "
