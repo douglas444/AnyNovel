@@ -1,21 +1,16 @@
 package anynovel.conceptEvolution;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import anynovel.StreamAR.BLM;
 import anynovel.StreamAR.ClassWSubClusters;
 import anynovel.StreamAR.Model;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Utils;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class ExpLauncher {
 	// To run training/ building the model followed by AnyNovel using the built

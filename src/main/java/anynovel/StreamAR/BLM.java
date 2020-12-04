@@ -1,15 +1,6 @@
 package anynovel.StreamAR;
 
-import java.awt.Component;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
-import anynovel.conceptEvolution.ConceptCategory;
+import br.com.douglas444.patternsampling.types.ConceptCategory;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
@@ -19,6 +10,14 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 
 public class BLM implements Serializable {
 

@@ -1,32 +1,22 @@
 package anynovel.conceptEvolution;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Scanner;
-
-import weka.core.converters.ConverterUtils.DataSource;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
-import weka.clusterers.EM;
-import weka.clusterers.SimpleKMeans;
+import anynovel.StreamAR.BLM;
 import anynovel.StreamAR.ClassWSubClusters;
 import anynovel.StreamAR.IntCWSCClass;
 import anynovel.StreamAR.Model;
-import anynovel.StreamAR.BLM;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
-import weka.core.Attribute;
-//import weka.core.DenseInstance;
-import weka.core.FastVector;
-//import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.Utils;
+import weka.clusterers.EM;
+import weka.clusterers.SimpleKMeans;
+import weka.core.*;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Scanner;
 
 public class TrainingLauncher {
 	// For either building a model from a training data or uploading an existing

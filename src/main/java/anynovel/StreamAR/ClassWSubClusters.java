@@ -1,7 +1,9 @@
 package anynovel.StreamAR;
-import java.io.Serializable;
+
 import weka.core.Instance;
 import weka.core.Instances;
+
+import java.io.Serializable;
 
 public class ClassWSubClusters implements Cloneable , Serializable{
 	/**

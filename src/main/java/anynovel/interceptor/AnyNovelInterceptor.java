@@ -1,17 +1,15 @@
 package anynovel.interceptor;
 
-import br.com.douglas444.dsframework.interceptor.ConsumerOrRunnableInterceptor;
-import anynovel.interceptor.context.ClusteredConceptContext;
+import br.com.douglas444.datastreamutils.interceptor.ConsumerOrRunnableInterceptor;
+import br.com.douglas444.patternsampling.common.ConceptClassificationContext;
 
 public class AnyNovelInterceptor {
 
-    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> NOVEL_CLUSTER;
-    public final ConsumerOrRunnableInterceptor<ClusteredConceptContext> KNOWN_CLUSTER;
+    public final ConsumerOrRunnableInterceptor<ConceptClassificationContext> NOVELTY_DETECTION_AL_FRAMEWORK;
 
     public AnyNovelInterceptor() {
 
-        this.NOVEL_CLUSTER = new ConsumerOrRunnableInterceptor<>();
-        this.KNOWN_CLUSTER = new ConsumerOrRunnableInterceptor<>();
+        this.NOVELTY_DETECTION_AL_FRAMEWORK = new ConsumerOrRunnableInterceptor<>();
 
     }
 }

@@ -1,17 +1,12 @@
 package anynovel.StreamAR;
 
+import weka.core.*;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-//import com.sun.corba.se.impl.util.Utility;
-
-import weka.core.Attribute;
-import weka.core.EuclideanDistance;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
 
 public class Model implements Serializable {
 

@@ -1,20 +1,12 @@
 package anynovel.conceptEvolution;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import anynovel.StreamAR.BLM;
 import anynovel.StreamAR.ClassWSubClusters;
 import anynovel.StreamAR.NovelPredection;
 import anynovel.interceptor.AnyNovelInterceptor;
-import anynovel.interceptor.context.ClusteredConceptContext;
+import br.com.douglas444.mltk.datastructure.PseudoPoint;
+import br.com.douglas444.mltk.datastructure.Sample;
+import br.com.douglas444.patternsampling.common.ConceptClassificationContext;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.core.Instance;
@@ -22,6 +14,11 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AnyNovelLauncher {
 	static String m_History = "";
@@ -380,43 +377,9 @@ public class AnyNovelLauncher {
 							declared = true;
 						NovelPredection pred = CEModel.noveltyStatistics();
 
-						List<Instance> targetInstances = new ArrayList<>();
-						for (int j = 0; j < CEModel.getJustPredicted().numInstances(); ++j) {
-							targetInstances.add(CEModel.getJustPredicted().instance(j));
-						}
+						ConceptClassificationContext context = fillContext(CEModel);
 
-						ClusteredConceptContext context = new ClusteredConceptContext()
-								.setDefaultAction(() -> {})
-								.setKnownClustersCentroids(CEModel.getM_classesWithClusters_BeforePrediction()
-										.stream()
-										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
-										.map(classWSubClusters -> {
-											double[] instanceArr = classWSubClusters.getM_classCentre().toDoubleArray();
-											double[] instanceArrWithClass = new double[instanceArr.length + 1];
-											System.arraycopy(instanceArr, 0, instanceArrWithClass, 0, instanceArr.length);
-											instanceArrWithClass[instanceArrWithClass.length - 1] = classWSubClusters.getClassID();
-											return instanceArrWithClass;
-										})
-										.collect(Collectors.toList()))
-								.setKnownLabels((CEModel.getM_classesWithClusters_BeforePrediction()
-										.stream()
-										.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
-										.map(ClassWSubClusters::getClassID)
-										.map(Double::valueOf)
-										.collect(Collectors.toSet())))
-								.setTargetClusterCentroid(CEModel
-										.getInstancesCentre(removeClass(CEModel.getJustPredicted()))
-										.toDoubleArray())
-								.setTargetSamples(targetInstances
-										.stream()
-										.map(Instance::toDoubleArray)
-										.collect(Collectors.toList()));
-
-						if (CEModel.getLastPredictionCategory().equals(ConceptCategory.NOVELTY)) {
-							interceptor.NOVEL_CLUSTER.with(context).executeOrDefault(() -> {});
-						} else if (CEModel.getLastPredictionCategory().equals(ConceptCategory.KNOWN)) {
-							interceptor.KNOWN_CLUSTER.with(context).executeOrDefault(() -> {});
-						}
+						interceptor.NOVELTY_DETECTION_AL_FRAMEWORK.with(context).executeOrDefault(() -> {});
 
 						s = "*True label= " + pred.getClassTrueLabel()[0] + " Predicted label:( "
 								+ pred.getPredictedLabel() + " ) FA_novel= " + pred.IsFAnovel() + " Recurrent Novel= "
@@ -686,6 +649,56 @@ public class AnyNovelLauncher {
 
 		out.close();
 		return CEModel;
+	}
+
+	private static ConceptClassificationContext fillContext(BLM CEModel) {
+
+		final List<Sample> targetInstances = new ArrayList<>();
+
+		final double[] targetClusterCentroid = CEModel
+				.getInstancesCentre(removeClass(CEModel.getJustPredicted()))
+				.toDoubleArray();
+
+		double distanceSum = 0;
+
+		for (int j = 0; j < CEModel.getJustPredicted().numInstances(); ++j) {
+
+			final double[] instance = CEModel.getJustPredicted().instance(j).toDoubleArray();
+			final double[] x = Arrays.copyOfRange(instance, 0, instance.length - 1);
+			final Integer y = (int) instance[instance.length - 1];
+
+			targetInstances.add(new Sample(x, y));
+
+			double squaredDifferenceSum = 0;
+			for (int k = 0; k < targetClusterCentroid.length; ++k) {
+				squaredDifferenceSum += Math.pow(targetClusterCentroid[k] - instance[k], 2);
+			}
+
+			distanceSum += Math.sqrt(squaredDifferenceSum);
+		}
+
+		final double targetClusterStandardDeviation = Math.sqrt(distanceSum);
+
+		return new ConceptClassificationContext()
+				.setDecision(CEModel.getLastPredictionCategory())
+				.setKnownClusterSummaries(CEModel.getM_classesWithClusters_BeforePrediction()
+						.stream()
+						.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
+						.map(classWSubClusters -> {
+							double[] instanceArr = classWSubClusters.getM_classCentre().toDoubleArray();
+							return new PseudoPoint(new Sample(instanceArr, classWSubClusters.getClassID()),
+									classWSubClusters.getGlobalAvDistance());
+						})
+						.collect(Collectors.toList()))
+				.setKnownLabels((CEModel.getM_classesWithClusters_BeforePrediction()
+						.stream()
+						.filter(classWSubClusters -> classWSubClusters.getClassID() != -1)
+						.map(ClassWSubClusters::getClassID)
+						.collect(Collectors.toSet())))
+				.setTargetClusterSummary(new PseudoPoint(new Sample(targetClusterCentroid),
+						targetClusterStandardDeviation))
+				.setTargetSamples(targetInstances);
+
 	}
 
 	public static Instances removeClass(Instances inst) {

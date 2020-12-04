@@ -1,12 +1,12 @@
 package anynovel.StreamAR;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 public class IntCWSCClass implements Cloneable , Serializable{
 	
 	/**
